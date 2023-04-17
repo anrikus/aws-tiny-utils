@@ -1,0 +1,21 @@
+region_name = "eu-west-1"
+
+# Multiline Query
+query = """fields @timestamp, @message 
+| filter @message like "Identity(accessKey=" 
+| parse @message "Identity(accessKey=*, accountId=*, " as k, accountId 
+| parse @message '\\"ModelName\\":\\"*\\"' as modelName 
+| stats count(*) as tps by accountId, modelName, bin(1s) as binTimestamp
+| sort binTimestamp asc"""
+
+log_group = '/aws/lambda/SagemakerEndpointPlaygrou-CoralLambdaEndpointLambd-MC8sXU9PGLka'
+
+# use an RFC 3339 formatted date-time in UTC
+# Example: 2023-04-14T23:59:59Z
+
+start_time = 2023-04-05T00:00:00Z
+end_time = 2023-04-13T23:59:59Z
+
+timestamp_field = "binTimestamp"
+
+output_file = "output.json"
